@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+  <div id="root"></div>
+</body>
+<!-- This setup is not suitable for production. -->
+<!-- Only use it in development! -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.7.0/dist/es-module-shims.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react?dev",
+    "react-dom/client": "https://esm.sh/react-dom/client?dev"
+  }
+}
+</script>
+<script type="text/babel" data-type="module">
+  import React, { StrictMode } from 'react';
+  import { createRoot } from 'react-dom/client';
+  
+  function Greeting() {
+    return (
+      <div>
+        <h1>POST Example</h1>
+        <div>
+          <button onClick={curlTwo}>Do POST Call Two</button>
+          <textarea id="result2" rows={10} cols={100} ></textarea>
+        </div>
+        <div>
+          <button onClick={curlThree}>Do POST Call Three</button>
+          <textarea id="result3" rows={10} cols={100} ></textarea>
+        </div>
+      </div>
+    );
+  }
+
+  function curlOne() {
+    fetch('http://127.0.0.1:8000', {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      document.getElementById("result").value = JSON.stringify({data});
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+  }
+
+  function curlTwo() {
+    let absPath = prompt("Please enter the path.", "data/Dengue-National-Guidelines-2014.pdf");
+    fetch('http://127.0.0.1:8000/embedding', {  // Enter your IP address/host here
+
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+      //Following is the body input parameter example of POST call
+      body: JSON.stringify({
+        "document": absPath
+      }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      document.getElementById("result2").value = JSON.stringify({data});
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+  }
+
+  function curlThree() {
+
+    let question = prompt("Please enter the question.");
+    let document = prompt("Please enter the document path with name.", "vectorstore.pkl");
+
+    fetch('http://127.0.0.1:8000/qanda', {  // Enter your IP address/host here
+
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+      //Following is the body input parameter example of POST call
+      body: JSON.stringify({
+        "question": question,
+        "document": document
+      }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      document.getElementById("result3").value = JSON.stringify({data});
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+  }
+
+  let App = function App() {
+    return <Greeting />
+  }
+
+  const root = createRoot(document.getElementById('root'));
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
+</script>
+<style>
+  body {
+    font-family: sans-serif;
+    margin: 20px;
+    padding: 0;
+  }
+</style>
+
+</html>
